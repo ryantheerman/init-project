@@ -1,0 +1,47 @@
+#!/bin/bash
+
+PROJECT_NAME=$1
+
+if [ -z "$PROJECT_NAME" ]; then
+    echo "Usage: launch <project-name>"
+    exit 1
+fi
+
+WORKSHOP=~/workshop
+COMMON=$WORKSHOP/common
+PROJECT=$WORKSHOP/projects/$PROJECT_NAME
+PORTS_FILE=$PROJECT/necessaries/ports
+PORT_FLAGS=""
+if [ -f "$PORTS_FILE" ]; then
+    while IFS= read -r line || [ -n "$line" ]; do
+        [[ "$line" =~ ^#|^$ ]] && continue
+        port=$(echo "$line" | sed 's/#.*//' | tr -d ' ')
+        PORT_FLAGS="$PORT_FLAGS -p $port:$port" 
+    done < "$PORTS_FILE"
+fi
+
+if tmux list-windows | grep -q -w $PROJECT_NAME; then
+    tmux select-window -t:$PROJECT_NAME
+else
+    tmux new-window -n $PROJECT_NAME \
+    "podman run -it --rm \
+        $PORT_FLAGS \
+        --network slirp4netns:allow_host_loopback=true \
+        --name $PROJECT_NAME \
+        --userns=keep-id \
+        -e PROJECT_NAME=$PROJECT_NAME \
+        -v $COMMON/config/.zshrc:/home/claude/.zshrc:ro \
+        -v $COMMON/config/.zshenv:/home/claude/.zshenv:ro \
+        -v $COMMON/config/.zsh_aliases:/home/claude/.zsh_aliases:ro \
+        -v $COMMON/config/.zsh_functions:/home/claude/.zsh_functions:ro \
+        -v $COMMON/config/.tmux.conf:/home/claude/.tmux.conf:ro \
+        -v $COMMON/config/.vimrc:/home/claude/.vimrc:ro \
+        -v $COMMON/config/.bc:/home/claude/.bc:ro \
+        -v $COMMON/config/global-claude.md:/home/claude/.claude/CLAUDE.md:ro \
+        -v $PROJECT/container-state/claude:/home/claude/.claude \
+        -v $PROJECT/necessaries/ssh:/home/claude/.ssh \
+        -v $PROJECT/container-state/claude.json:/home/claude/.claude.json \
+        -v $PROJECT/container-state/.zsh_history:/home/claude/.zsh_history \
+        -v $PROJECT/workspace:/workspace \
+        claude-$PROJECT_NAME"
+fi

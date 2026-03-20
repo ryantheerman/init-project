@@ -1,0 +1,3 @@
+Host github.com
+    IdentityFile ~/.ssh/REPLACE_ME
+    User git

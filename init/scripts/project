@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# needs validations for...
+# project already exists -> do nothing
+# software to install
+
+# prompt for project name
+echo "setting up a new project..." 
+read -p "enter project name: " project_name
+
+# exit with no action if project exists
+if [[ -d $HOME/workshop/projects/$project_name ]]; then
+    echo "project $project_name already exists"
+    exit
+fi
+
+necessaries=$HOME/workshop/projects/$project_name/necessaries
+state=$HOME/workshop/projects/$project_name/container-state
+workspace=$HOME/workshop/projects/$project_name/workspace
+
+# init project structure and files
+echo
+echo "creating directory tree and minimum necessary base files..."
+mkdir -p $HOME/workshop/projects/$project_name/{container-state/claude,necessaries/ssh,workspace} \
+    && cp $HOME/workshop/init/images/Dockerfile.project $necessaries/Dockerfile.$project_name \
+    && sed -i "s|REPLACE_ME|$project_name|" $necessaries/Dockerfile.$project_name \
+    && cp $HOME/workshop/init/skel/ports $necessaries/ports \
+    && cp $HOME/workshop/init/skel/ssh-config $necessaries/ssh/config \
+    && sed -i "s|REPLACE_ME|id_claude-$project_name|" $necessaries/ssh/config \
+    && cp $HOME/workshop/init/skel/.zsh_history $state/.zsh_history \
+    && cp $HOME/workshop/init/skel/claude.json $state/claude.json
+
+# generate ssh key pair
+ssh-keygen -t ed25519 -C "$project_name" -f "$necessaries/ssh/id_claude-$project_name" -N ""
+
+# build dockerfiles
+echo
+echo "building base and project images..."
+podman build -f $HOME/workshop/init/images/Dockerfile.base -t claude-base $HOME/workshop/init/images
+podman build -f $HOME/workshop/projects/$project_name/necessaries/Dockerfile.$project_name -t claude-$project_name
+
+# success message
+echo "successfully created project $project_name with structure:"
+cd $HOME/workshop/projects
+tree -La 2 $project_name
+

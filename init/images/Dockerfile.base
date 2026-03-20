@@ -1,0 +1,31 @@
+FROM archlinux:base
+
+RUN pacman -Syu --noconfirm && pacman -S --noconfirm \
+    openssh \
+    curl \
+    zsh \
+    git \
+    ripgrep \
+    tmux \
+    vim \
+    fzf \
+    bc \
+    sox \
+    && pacman -Sc --noconfirm
+
+RUN useradd -m -u 1000 -s /bin/zsh claude
+
+USER claude
+
+RUN mkdir -p /home/claude/.ssh && chmod 700 /home/claude/.ssh
+
+RUN curl -fsSL https://claude.ai/install.sh | sh
+
+ENV PATH="/home/claude/.local/bin:$PATH"
+
+COPY --chown=claude:claude entrypoint.sh /home/claude/entrypoint.sh
+RUN chmod +x /home/claude/entrypoint.sh
+
+WORKDIR /workspace
+
+ENTRYPOINT ["/home/claude/entrypoint.sh"]

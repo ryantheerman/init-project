@@ -1,0 +1,10 @@
+# output entire history
+alias history="history 0"
+
+#console output color
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+# output usage stats for the drives I care about
+alias dfx='df -H -x tmpfs -x efivarfs'

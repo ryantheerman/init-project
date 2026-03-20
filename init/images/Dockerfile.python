@@ -1,0 +1,13 @@
+FROM claude-base
+
+USER root
+RUN pacman -Syu --noconfirm && pacman -S --noconfirm \
+    python \
+    python-pip \
+    python-virtualenv \
+    && pacman -Sc --noconfirm
+
+ENV PROJECT_NAME=test-python
+
+USER claude
+WORKDIR /workspace

@@ -1,0 +1,4 @@
+#!/bin/bash
+tmux send-keys -t "claude-vm:1" C-c Enter
+tmux send-keys -t "claude-vm:1" "tmux split-window -t "claude-vm:1" "launch\ $1"" Enter
+

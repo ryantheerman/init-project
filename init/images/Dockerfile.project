@@ -1,0 +1,11 @@
+FROM claude-base
+
+USER root
+#RUN pacman -Syu --noconfirm && pacman -S --noconfirm \
+#    # project specific software goes here
+#    && pacman -Sc --noconfirm
+
+ENV PROJECT_NAME=REPLACE_ME
+
+USER claude
+WORKDIR /workspace

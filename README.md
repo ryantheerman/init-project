@@ -79,3 +79,6 @@ I've installed a handful of tools on the vm. The following are those required fo
   - slirp4netns
   - tmux
   - tree
+
+### Screenshots
+<img width="1920" height="1200" alt="screenshot from 2026-03-20 23-01-30" src="https://github.com/user-attachments/assets/e6444095-100a-4ab5-9c73-f5d7f697d26b" />

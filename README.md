@@ -47,7 +47,7 @@ The scripts assume you are already in a tmux session named claude-vm, and that ~
    - the project directory tree is created under **workshop/projects** (excluded from version control in this repo via .gitignore)
    - necessary base files are copied and modified from the /workshop/init/skel directory to the correct locations in the project tree
    - a project specific ssh key pair is created. this will be scoped to a single repo for claude to read from and write to. i don't want claude accessing my entire github (coughwhataboutcopilotcough)
-   - the project container image is created by using by building the base and project specific Dockerfiles
+   - the project container image is created by building the base and project specific Dockerfiles
    - and finally a success message is echoed, followed by a tree of the newly created project
  - Run `launch <project name>` to spin up an existing project or, if the project is already running, switch to it.
    - sets up some vars

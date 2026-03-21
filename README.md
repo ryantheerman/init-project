@@ -38,7 +38,7 @@ workshop
 <br>**init/skel** contains some files either empty or with default contents that are used when initializing a new project.
 <br>**init/images** contains Dockerfiles used to build container images.
  - Dockerfile.base installs a minimal arch install with some necessary tools, adds a user 'claude', sets up a .ssh dir under /home/claude in the container, installs claude code, sets a PATH, copies the entrypoint script into the container and makes it executable, sets the workdir, and establishes the entrypoint. The entry point simply spins up a tmux session named after the project and launches Claude when the container starts.
- - Dockerfile.project is copied when initializing a new project. It is basically a blank slate build on the Dockerfile.base. For each project, necessary software is added as needed and the image is rebuilt.
+ - Dockerfile.project is copied when initializing a new project. It is basically a blank slate built on the Dockerfile.base. For each project, necessary software is added as needed and the image is rebuilt.
  - The other Dockerfiles are simple templates for java and python projects. I may remove these eventually.
 
 ### How it Works

@@ -7,6 +7,7 @@
 
 The following locations are bind-mounted from the host and persist across container rebuilds:
 - `/workspace` — primary project working directory
+- `/home/claude/.ssh` - project specific ssh keys and config
 - `/home/claude/.claude` — Claude config directory
 - `/home/claude/.claude/CLAUDE.md` — this global config file
 - `/home/claude/claude.json`

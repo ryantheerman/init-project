@@ -1,6 +1,6 @@
 ## Project Initialization
 ### Overview
-This repo contains an opinionated set of scripts, configuration files, and image recipes for initializing new projects to work on with claude code.<br>I'm too paranoid to give claude access to my actual system, so i've set up an arch VM to house my experiments/work with claude. Call it being extra paranoid, but I also only install and launch claude in containers.<br>The original intent of this architecture was to keep claude two layers away from my host, but containerizing claude has the added benefits of clean dependency isolation per project, a reproducible environment, and less risk of accumulating state on the vm. nuking a project is a single image delete with no loose ends dangling in the system.
+This repo contains an opinionated set of scripts, configuration files, and image recipes for initializing new projects to work on with claude code.<br>I'm too paranoid to give claude access to my actual system, so i've set up an arch VM to house my experiments/work with claude. Call it being extra paranoid, but I also only install and launch claude in containers.<br>The original intent of this architecture was to keep claude two layers away from my host, but containerizing claude has the added benefits of clean dependency isolation per project, a reproducible environment, and less risk of accumulating shared deps/configs on the vm. nuking a project is a single image delete with no loose ends dangling in the system.
 
 ### Structure
 ```

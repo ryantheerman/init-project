@@ -1,6 +1,6 @@
 ## Project Initialization
 ### Overview
-This repo contains an opinionated set of scripts, configurations files, and image recipes for initializing new projects to work on with claude code.<br>I'm too paranoid to give claude access to my actual system, so i've set up an arch VM to house my experiments/work with claude. Call it being extra paranoid, but I also only install and launch claude in containers.<br>The original intent of this architecture was to erect 2 walls of separation between claude and my host machine, but containerizing claude has the added benefit of allowing me to wipe out an entire claude project with no loose ends left hanging in the system.
+This repo contains an opinionated set of scripts, configuration files, and image recipes for initializing new projects to work on with claude code.<br>I'm too paranoid to give claude access to my actual system, so i've set up an arch VM to house my experiments/work with claude. Call it being extra paranoid, but I also only install and launch claude in containers.<br>The original intent of this architecture was to erect 2 walls of separation between claude and my host machine, but containerizing claude has the added benefit of allowing me to wipe out an entire claude project with no loose ends left hanging in the system.
 
 ### Structure
 ```
@@ -49,18 +49,18 @@ the scripts assume you are already in a tmux session named claude-vm
  - `switch`: intended to be invoked via the tmux command prompt rather than a shell. requires a tmux command alias defined in your ~/.tmux.conf. the exact line is in the script's header comments. once configured, you can type launch from the tmux command prompt and be prompted for a project name, without opening a new pane or window first.
 
 #### Operational Notes
+ - PATH: add ~/workshop/init/scripts (or wherever you store these scripts) to your PATH. the scripts can be invoked directly from any directory once this is done, but nothing enforces it. you can also call them by full path if you prefer.
  - persistence: because i don't want to drown in old containers on the limited space of the vm, containers run with --rm, so any state not in a bind-mounted path is lost on container exit. verify your mount configuration before relying on in-container writes. make sure claude is also aware of this constraint, either in your global CLAUDE.md or per-workspace.
  - ssh key scoping: project generates a project-specific key pair but does not attach it anywhere. attach the public key to a single github repository. this is a deliberate security boundary limiting claude's github access to that repo only.
  - authentication: on first launch of a new project container, you'll need to authenticate with anthropic and authorize the claude instance. because claude.json is bind mounted, auth persists across container restarts. token refreshes are handled automatically.
- - nested tmux prefix keys: both the vm and container .tmux.confs bind the prefix to ctrl+a. with keyd on the host, a ctrl tap sends ctrl+a while holding ctrl still acts as ctrl. these behaviours extend over ssh, whether regardless of whether you're in a graphical session or tty. in a nested tmux session, one tap sends the prefix to the outer session, two taps to the inner. worth setting up... check out keyd.
- - PATH: add ~/workshop/init/scripts (or wherever you store these scripts) to your PATH. the scripts can be invoked directly from any directory once this is done, but nothing enforces it. you can also call them by full path if you prefer.
+ - nested tmux prefix keys: both the vm and container .tmux.confs bind the prefix to ctrl+a. with keyd on the host, a ctrl tap sends ctrl+a while holding ctrl still acts as ctrl. in a nested tmux session, one tap sends the prefix to the outer session, two taps to the inner. worth setting up... check out keyd.
 
 ### Workflow
 I connect to claude-vm via a connection script that handles sshing into the vm and attaching to or creating a tmux session. This means I'm always dropped back where I left off, as long as the vm is running.
 From there, the typical project lifecycle looks like this:
 
  1. run `project` and enter a project name to initialize the project
- 2. run `launch <project name>` to open the project container in a new vm tmux window. the entrypoint will drop you directly into a container-scoped tmux session with claude running. to run multiple projects concurrently, repeat in a new shell or leverage the `switch` via the tmux command line
+ 2. run `launch <project name>` to open the project container in a new vm tmux window. the entrypoint will drop you directly into a container-scoped tmux session with claude running. to run multiple projects concurrently, repeat in a new shell or leverage `switch` via the tmux command line
  3. on first launch, authenticate with anthropic and authorize the claude instance, then create a github repo and attach the project-specific public key to it
  4. enter a planning session with claude — discuss the objective, define requirements and constraints, agree on a stack, and produce an implementation plan. instruct claude to persist the relevant portions to memory before exiting
  5. update the project dockerfile with the required software and rebuild the image, then relaunch the container
@@ -68,7 +68,7 @@ From there, the typical project lifecycle looks like this:
  7. work iteratively — I toggle between planning and implementation modes. claude tends toward eagerness; planning mode helps pump the brakes
  8. commit and push periodically by instructing claude directly
 
-common/config/global-claude.md is bind mounted to each container's /home/claude/.claude/ dir and picked up automatically by every claude instance. It describes the environment and sets behavioral preferences that apply across all projects.
+**common/config/global-claude.md** is bind mounted to each container's /home/claude/.claude/ dir and picked up automatically by every claude instance. It describes the environment and sets behavioral preferences that apply across all projects.
 
 ### Tools
 I've installed a handful of tools on the vm. The following are those required for use with the scripts in this repo:

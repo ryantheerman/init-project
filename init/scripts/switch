@@ -1,8 +1,0 @@
-#!/bin/bash
-
-# adding the following command alias to your tmux.conf will allow you to use the tmux command line to launch or switch to the project you specify when prompted
-# set -s command-alias[100] 'launch=command-prompt -p "Project:" "run-shell \"~/scripts/switch %%\""'
-
-tmux send-keys -t "claude-vm:1" C-c Enter
-tmux send-keys -t "claude-vm:1" "tmux split-window -t "claude-vm:1" "launch\ $1"" Enter
-

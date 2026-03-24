@@ -43,7 +43,7 @@ workshop
 
 ### How it Works
 #### Scripts
-The scripts assume you are already in a tmux session named claude-vm.
+The scripts assume you are already in a tmux session.
  - `project`: Initializes a new project. Prompts for a project name, then creates the project directory tree under workshop/projects, copies and modifies base files from init/skel, generates a project-specific ssh key pair, and builds the project container image. Exits with an error if the project already exists. On success, prints a tree of the newly created project.
  - `launch <project name>`: Spins up a project container in a new tmux window on the vm, or switches to the window if the project is already running. Handles container naming, container networking, and bind mounting of common config and project-specific files. The entrypoint starts a container-scoped tmux session and launches claude automatically.
  - <del>`switch`: A convenience wrapper around `launch`, intended to be invoked via the tmux command prompt rather than a shell. Requires a tmux command alias defined in your ~/.tmux.conf. The exact line is in the script's header comments. Once configured, you can type `launch` from the tmux command prompt and be prompted for a project name. `switch` handles the mechanics of running `launch` from within tmux. The actual window management behavior is the same as calling `launch` directly.</del>

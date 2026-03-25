@@ -68,14 +68,15 @@ The scripts assume you are already in a tmux session.
 I connect to claude-vm via a connection script that handles sshing into the vm and attaching to or creating a tmux session. This means I'm always dropped back where I left off, as long as the vm is running.
 From there, the typical project lifecycle looks like this:
 
- 1. Run `project` and enter a project name to initialize the project
- 2. Run `launch <project name>` to open the project container in a new vm tmux window. The entrypoint will drop you directly into a container-scoped tmux session with claude running. To run multiple projects concurrently, repeat in a new shell or leverage `switch` via the tmux command line
- 3. On first launch, authenticate with anthropic and authorize the claude instance, then create a github repo and attach the project-specific public key to it
- 4. Enter a planning session with claude. Discuss the objective, define requirements and constraints, agree on a stack, and produce an implementation plan. Instruct claude to persist the relevant portions to memory before exiting
- 5. Update the project Dockerfile with the required software and rebuild the image, then relaunch the container
- 6. On subsequent launches, prompt claude for the current project state. It will review its memories and analyze the workspace to determine where things stand
- 7. Work iteratively. I toggle between planning and implementation modes frequently. Claude tends toward eagerness; planning mode helps pump the brakes
- 8. Commit and push periodically by instructing claude directly
+ 1. One time only run `seed-claude` before launching any project container. This will initialize the claude binary and symlink in the bind-mounted **common/claude-bin** and **common/claude-install** dirs
+ 2. Run `project` and enter a project name to initialize the project
+ 3. Run `launch <project name>` to open the project container in a new vm tmux window. The entrypoint will drop you directly into a container-scoped tmux session with claude running. To run multiple projects concurrently, repeat in a new shell or leverage `switch` via the tmux command line
+ 4. On first launch, authenticate with anthropic and authorize the claude instance, then create a github repo and attach the project-specific public key to it
+ 5. Enter a planning session with claude. Discuss the objective, define requirements and constraints, agree on a stack, and produce an implementation plan. Instruct claude to persist the relevant portions to memory before exiting
+ 6. Update the project Dockerfile with the required software and rebuild the image, then relaunch the container
+ 7. On subsequent launches, prompt claude for the current project state. It will review its memories and analyze the workspace to determine where things stand
+ 8. Work iteratively. I toggle between planning and implementation modes frequently. Claude tends toward eagerness; planning mode helps pump the brakes
+ 9. Commit and push periodically by instructing claude directly
 
 **common/config/global-claude.md** is bind mounted to each container's /home/claude/.claude/ dir and picked up automatically by every claude instance. It describes the environment and sets behavioral preferences that apply across all projects.
 

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+podman run --rm \
+    --userns=keep-id \
+    --entrypoint bash \
+    -v ~/workshop/common/claude-bin:/tmp/bin-seed \
+    -v ~/workshop/common/claude-install:/tmp/share-seed \
+    claude-base -c "cp -a /home/claude/.local/bin/. /tmp/bin-seed/ && cp -a /home/claude/.local/share/claude/. /tmp/share-seed/"

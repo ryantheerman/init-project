@@ -6,32 +6,37 @@ This repo contains an opinionated set of scripts, configuration files, and image
 ```
 workshop
 ├── common
-│   └── config
-│       ├── .bc
-│       ├── global-claude.md
-│       ├── .tmux.conf
-│       ├── .vimrc
-│       ├── .zsh_aliases
-│       ├── .zshenv
-│       ├── .zsh_functions
-│       └── .zshrc
+│   ├── claude-bin
+│   │   └── .gitkeep
+│   ├── claude-install
+│   │   └── .gitkeep
+│   ├── config
+│   │   ├── .bc
+│   │   ├── .tmux.conf
+│   │   ├── .vimrc
+│   │   ├── .zsh_aliases
+│   │   ├── .zshenv
+│   │   ├── .zsh_functions
+│   │   └── .zshrc
+│   └── global-claude.md
 ├── .gitignore
-└── init
-    ├── images
-    │   ├── Dockerfile.base
-    │   ├── Dockerfile.java-base
-    │   ├── Dockerfile.project
-    │   ├── Dockerfile.python-base
-    │   └── entrypoint.sh
-    ├── scripts
-    │   ├── launch
-    │   ├── project
-    │   └── switch
-    └── skel
-        ├── claude.json
-        ├── ports
-        ├── ssh-config
-        └── .zsh_history
+├── init
+│   ├── images
+│   │   ├── Dockerfile.base
+│   │   ├── Dockerfile.java-base
+│   │   ├── Dockerfile.project
+│   │   ├── Dockerfile.python-base
+│   │   └── entrypoint.sh
+│   ├── scripts
+│   │   ├── launch
+│   │   ├── project
+│   │   └── seed-claude
+│   └── skel
+│       ├── claude.json
+│       ├── ports
+│       ├── ssh-config
+│       └── .zsh_history
+└── README.md
 ```
 **common/config** contains configuration files that are bind mounted read only to any given project container.
 <br>**init/scripts** contains the scripts for creating and launching/switching to projects
@@ -46,12 +51,14 @@ workshop
 The scripts assume you are already in a tmux session.
  - `project`: Initializes a new project. Prompts for a project name, then creates the project directory tree under workshop/projects, copies and modifies base files from init/skel, generates a project-specific ssh key pair, and builds the project container image. Exits with an error if the project already exists. On success, prints a tree of the newly created project.
  - `launch <project name>`: Spins up a project container in a new tmux window on the vm, or switches to the window if the project is already running. Handles container naming, container networking, and bind mounting of common config and project-specific files. The entrypoint starts a container-scoped tmux session and launches claude automatically.
+ - `seed-claude`: A one time setup step that must be run before launching your first project. Populates **common/claude-bin** and **common/claude-install** on the host by copying the claude code installation out of the base image. Without this step, the claude binary will be missing from the bind-mounted paths and containers will fail to start.
  - <del>`switch`: A convenience wrapper around `launch`, intended to be invoked via the tmux command prompt rather than a shell. Requires a tmux command alias defined in your ~/.tmux.conf. The exact line is in the script's header comments. Once configured, you can type `launch` from the tmux command prompt and be prompted for a project name. `switch` handles the mechanics of running `launch` from within tmux. The actual window management behavior is the same as calling `launch` directly.</del>
     - Removed the above mentioned `switch` script. It was needlessly complicated. Instead, I've just set this in my vm ~/.tmux.conf: `set -s command-alias[100] 'launch=command-prompt -p "Project:" "run-shell \"~/workshop/init/scripts/launch %%\""'` This calls the `launch` script directly with no superfluous wrapper.
 
 #### Operational Notes
  - PATH: Add ~/workshop/init/scripts (or wherever you store these scripts) to your PATH. The scripts can be invoked directly from any directory once this is done, but nothing enforces it. You can also call them by full path if you prefer.
  - persistence: Because I don't want to drown in old containers on the limited space of the vm, containers run with --rm, so any state not in a bind-mounted path is lost on container exit. Verify your mount configuration before relying on in-container writes. Make sure claude is also aware of this constraint, either in your global CLAUDE.md or per-workspace.
+ - claude binary seeding: **common/claude-bin** and **common/claude-install** are bind-mounted into every project container to persist the claude code installation across container restarts. The contents of these directories are not version controlled. Before launching your first project, run the `seed-claude` script once to seed them from the base image. To update claude code, run `claude update` from inside any running project container. The update persists to the host immediately and the latest version will be available to any new or restarted container.
  - user uid: Dockerfile.base hardcodes the container user `claude` at uid 1000. The launch script uses `--userns=keep-id`, which maps your vm user's uid into the container. If your vm user is not uid 1000, you may hit permission issues on bind-mounted paths. Verify with `id -u` on the vm before building.
  - ssh key scoping: `project` generates a project-specific key pair but does not attach it anywhere. Attach the public key to a single github repository. This is a deliberate security boundary limiting claude's github access to that repo only.
  - authentication: On first launch of a new project container, you'll need to authenticate with anthropic and authorize the claude instance. Because claude.json is bind mounted, auth persists across container restarts. Token refreshes are handled automatically.

@@ -1,1 +1,5 @@
 projects/
+common/claude-bin/*
+common/claude-install/*
+!common/claude-bin/.gitkeep
+!common/claude-install/.gitkeep

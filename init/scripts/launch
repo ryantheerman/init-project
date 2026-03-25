@@ -41,7 +41,9 @@ else
         -v $COMMON/config/.tmux.conf:/home/claude/.tmux.conf:ro \
         -v $COMMON/config/.vimrc:/home/claude/.vimrc:ro \
         -v $COMMON/config/.bc:/home/claude/.bc:ro \
-        -v $COMMON/config/global-claude.md:/home/claude/.claude/CLAUDE.md:ro \
+        -v $COMMON/global-claude.md:/home/claude/.claude/CLAUDE.md:ro \
+        -v $COMMON/claude-bin:/home/claude/.local/bin \
+        -v $COMMON/claude-install:/home/claude/.local/share/claude \
         -v $PROJECT/container-state/claude:/home/claude/.claude \
         -v $PROJECT/necessaries/ssh:/home/claude/.ssh \
         -v $PROJECT/container-state/claude.json:/home/claude/.claude.json \

@@ -26,7 +26,7 @@ if podman ps --format '{{.Names}}' | grep -qx "$PROJECT_NAME"; then
     tmux select-window -t:$PROJECT_NAME
 else
     # only issue here is that this kills any processes running in the dead container window too. i think i'm fine with it, but keep an eye on it future.
-    tmux kill-window -t:$PROJECT_NAME
+    tmux kill-window -t:$PROJECT_NAME 2>/dev/null
     tmux new-window -n $PROJECT_NAME \
     "podman run -it --rm \
         $PORT_FLAGS \

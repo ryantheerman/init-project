@@ -1,0 +1,35 @@
+
+oo
+
+
+relative line numbers working
+tabs working as expected
+
+spell check just underlining, no highlighting
+vim spellfile not getting picked up
+autoindent working
+wrap working as expected
+search working as expected
+clear highlight working as expected
+key remaps working as expected
+style is not what i expect. cursorline highlights the whole line in light grey. in vim it just underlines the line.
+highlight colors are not what i expect either.
+scmindent.rkt seems to be picked up in racket files.
+leader key works as intended
+cursor restores to last location in file
+
+
+aur nvme 
+eauosntheoau eunthseau hello
+test:
+    - 
+    - let's test word wrap. we just need to type enough to wrap around to the next line. we should see it wrap correctly. good
+
+
+!! testing
+<< testing
+## testing
+?? testing
+
+
+((((((((()))))))))
